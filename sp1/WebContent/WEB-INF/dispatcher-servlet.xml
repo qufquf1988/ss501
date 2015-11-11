@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+	
+      <bean id="beanNameUrlMapping" 
+              class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+         <property name="alwaysUseFullPath" value="true"/>
+		 <property name="order" value="1"/>
+     </bean>
+     
+      <bean id="handlerMapping" 
+              class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+         <property name="alwaysUseFullPath" value="true"/>
+		 <property name="order" value="2"/>
+		 
+		 <property name="mappings">
+		 	<props>
+		 		<prop key="/bbs/*.do">bbs.boardController</prop>
+		 	</props>
+		 </property>
+     </bean>
+
+   	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+       <property name="prefix" value="/WEB-INF/views/" /> <!-- hello/hello 던짐 -->
+       <property name="suffix" value=".jsp" /> 
+   </bean>
+   
+   <bean id="helloService" class="com.hello.HelloServiceImpl"/>
+   
+   <bean name="/hello.do" class="com.hello.HelloController">
+   	<property name="helloService" ref="helloService"/>
+   </bean>
+   
+   <bean id="propsResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+   	<property name="mappings">
+   		<props>
+   			<prop key="/bbs/list.do">list</prop> <!-- key를 받으면 list를 실행. 각각 -->
+   			<prop key="/bbs/write.do">writeForm</prop>
+   			<prop key="/bbs/write_ok.do">writeSubmit</prop>
+   		</props>
+   	</property>
+   </bean>
+   
+	<bean id="bbs.boardController" class="com.bbs.BoardController">
+		<property name="methodNameResolver" ref="propsResolver"/>
+	</bean>
+ </beans>  
